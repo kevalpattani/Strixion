@@ -27,7 +27,9 @@ ALU Control,         Operation,   Corresponding RISC-V Instructions
 module ALU(
     input [31:0] Src_A, Src_B,
     input [4:0] alucontrol,
-    output reg [31:0] result_alu    
+    input branch_token,
+    output reg [31:0] result_alu,
+    output reg zero_pin  
 );
 
 wire [31:0] result_add;
@@ -63,24 +65,65 @@ begin
         end
         5'b00110: begin
             result_alu = result_sub;
+            if (branch_token) begin // branch_token 1 -> BNE
+                if (result_alu == 32'b0) begin
+                    zero_pin = 1'b0;
+                end
+                else begin
+                    zero_pin = 1'b1;
+                end
+            end
+            else // branch_token 0 -> BEQ
+                if (result_alu == 32'b0) begin
+                    zero_pin = 1'b1;
+                end
+                else begin
+                    zero_pin = 1'b0;
+                end
+            begin
+            end
         end
         5'b00111: begin
-            result_alu = $signed(Src_A) >>> Src_B[4:0]; // $signed is added cause otherwise the operation will not be the arithematic shift, it will be logical shift 
+            result_alu = $signed(Src_A) >>> Src_B[4:0]; // $signed is added cause otherwise the operation will not be the arithematic shift as intended, it will be logical shift 
         end
         5'b01000: begin
-            if ($signed(Src_A) < $signed(Src_B)) begin
+            if ($signed(Src_A) < $signed(Src_B)) begin // blt and bge -> {rs1 < rs2} and {rs1 > rs2} signed
                 result_alu = 32'b1;
+                if (branch_token) begin // bge -> {rs1 > rs2}
+                    zero_pin = 1'b0;
+                end
+                else begin // blt -> {rs1 < rs2}
+                    zero_pin = 1'b1;
+                end
             end
             else begin
                 result_alu = 32'b0;
+                if (branch_token) begin // bge -> {rs1 > rs2}
+                    zero_pin = 1'b1;
+                end
+                else begin // blt -> {rs1 < rs2}
+                    zero_pin = 1'b0;
+                end
             end
         end
         5'b01001: begin
             if (Src_A < Src_B) begin
                 result_alu = 32'b1;
+                if (branch_token) begin // bgeu -> {rs1 > rs2}
+                    zero_pin = 1'b0;
+                end
+                else begin // bltu -> {rs1 < rs2}
+                    zero_pin = 1'b1;
+                end
             end
             else begin
                 result_alu = 32'b0;
+                if (branch_token) begin // bgeu -> {rs1 > rs2}
+                    zero_pin = 1'b1;
+                end
+                else begin // bltu -> {rs1 < rs2}
+                    zero_pin = 1'b0;
+                end
             end
         end
         
