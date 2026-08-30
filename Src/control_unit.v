@@ -13,7 +13,7 @@ module control_unit(
 
 /*
 
-for any questions u can contact me via mail at kevalpatti 123 [at] gmail [dot] com
+for any questions u can contact me via mail at kevalpattani 123 [at] gmail [dot] com
 
 MemtoReg 0 -> ALU result
          1 -> Memory result
