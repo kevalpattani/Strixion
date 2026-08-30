@@ -6,11 +6,12 @@ module memory_unit( // Dual-Port hehe
     input [31:0] inst_addr,
     output [31:0] inst_read_data, // its wire cause its reads are combinational
     // Port Two
+    input read_enable,
     input write_enable,
     input [31:0] data_addr,
     input [31:0] data_write_data, 
     input [3:0] data_bytewise_select, // all four bytes of these will help for writing a specific byte(s) or loading a specific byte(s)
-    output reg [31:0] data_read_data
+    output [31:0] data_read_data
 );
 
 reg [31:0] main_memory [2047:0];
@@ -40,16 +41,10 @@ CPU Byte Address,  Binary,   Shifted Right (>> 2),    Verilog RAM Index
 
 */
 
-always @(posedge clk or negedge rst) begin
-    
-    if (~rst) begin
-        data_read_data <= 32'b0;
-    end
-    else begin
-        if (!write_enable) begin
-            data_read_data <= main_memory[data_addr >> 2]; // lb, lh and all will be taken care by the LSU
-        end
-        else begin
+assign data_read_data = (read_enable) ? main_memory[data_addr >> 2] : 32'b0;
+
+always @(posedge clk) begin
+        if (write_enable) begin
             if (data_bytewise_select[0]) begin
                 main_memory[data_addr >> 2][7:0] <= data_write_data[7:0];
             end
