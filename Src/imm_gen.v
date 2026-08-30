@@ -15,7 +15,7 @@ always @(*) begin
         7'b0110111: instruction_out = {instruction[31:12], 12'b0}; // U - type -> LUI
         7'b0010111: instruction_out = {instruction[31:12], 12'b0}; // U - type -> AUIPC
         7'b1101111: instruction_out = {{12{instruction[31]}}, instruction[19:12], instruction[20], instruction[30:21], 1'b0}; // UJ - type -> JAL
-        default: instruction_out = {{20{instruction[31]}}, instruction[30:20]};
+        default: instruction_out = {{20{instruction[31]}}, instruction[31:20]};
     endcase
 end
 endmodule
