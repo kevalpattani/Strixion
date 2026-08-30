@@ -44,6 +44,9 @@ divider_ALU div(.a(Src_A),.b(Src_B),.func3(alucontrol[1:0]),.result_sum(result_d
 
 always @(*)
 begin
+    result_alu = 32'b0;
+    zero_pin = 1'b0;
+    
     casex(alucontrol)
         5'b00000: begin
             result_alu = Src_A & Src_B; 
@@ -73,15 +76,14 @@ begin
                     zero_pin = 1'b1;
                 end
             end
-            else // branch_token 0 -> BEQ
+            else begin// branch_token 0 -> BEQ
                 if (result_alu == 32'b0) begin
                     zero_pin = 1'b1;
                 end
                 else begin
                     zero_pin = 1'b0;
                 end
-            begin
-            end
+            end    
         end
         5'b00111: begin
             result_alu = $signed(Src_A) >>> Src_B[4:0]; // $signed is added cause otherwise the operation will not be the arithematic shift as intended, it will be logical shift 
