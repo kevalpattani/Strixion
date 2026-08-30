@@ -1,7 +1,6 @@
 `timescale 1ns / 1ps
 
 module alu_control(
-    input ALUop,
     input [2:0] func3,
     input [6:0] opcode,
     input func7_30th_bit, func7_25th_bit,
@@ -10,7 +9,7 @@ module alu_control(
     );
     
 /*
-| **Instruction** | **Opcode [6:0]** | **func3  [14:12]** | **func7  [31:25]** |
+| **Instruction** | **Opcode [6:0]** | **funct3 [14:12]** | **funct7 [31:25]** |
 | --------------- | ---------------- | ------------------ | ------------------ |
 | **MUL**         | `0110011`        | `000`              | `0000001`          |
 | **MULH**        | `0110011`        | `001`              | `0000001`          |
@@ -51,7 +50,7 @@ always @(*) begin
         end
         
         /*
-        |   Instruction   |   Opcode [6:0]   |   func3  [14:12]   |   func7  [31:25]   |
+        |   Instruction   |   Opcode [6:0]   |   funct3 [14:12]   |   funct7 [31:25]   |
         | --------------- | ---------------- | ------------------ | ------------------ |
         | **ADD**         | `0110011`        | `000`              | `0000000`          |
         | **SUB**         | `0110011`        | `000`              | `0100000`          |
@@ -93,7 +92,7 @@ always @(*) begin
     else if (opcode == 7'b0010011) begin // I - type -> ADDI and all
         branch_token = 1'b0;
         /*
-        | **Instruction** | **Opcode [6:0]** | **func3  [14:12]** | **func7  [31:25] (only for SL&R)** |
+        | **Instruction** | **Opcode [6:0]** | **funct3 [14:12]** | **funct7 [31:25] (if applicable)** |
         | --------------- | ---------------- | ------------------ | ---------------------------------- |
         | **ADDI**        | `0010011`        | `000`              | N/A                                |
         | **SLTI**        | `0010011`        | `010`              | N/A                                |
