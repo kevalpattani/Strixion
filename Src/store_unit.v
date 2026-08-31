@@ -3,7 +3,9 @@
 module store_unit(
     input [1:0] alu_result_last_bits,
     input [1:0] instruction_type,
-    output [3:0] data_bytewise_select
+    input [31:0] data_in,
+    output [3:0] data_bytewise_select,
+    output [31:0] data_out
 );
 
 /*
@@ -19,5 +21,9 @@ assign data_bytewise_select = (instruction_type == 2'b00) ?
                                (/* X 1 */(alu_result_last_bits[1] == 1'b1) ? 4'b1000 /* 4th bit -> 11*/ : 4'b0010 /* 2nd bit -> 01*/) :
                                (/* X 0 */(alu_result_last_bits[1] == 1'b1) ? 4'b0100 /* 3rd bit -> 10*/ : 4'b0001 /* 1st bit -> 00*/)) :
                               ((instruction_type == 2'b01) ? ((alu_result_last_bits[1] == 1'b1) ? 4'b1100 : 4'b0011) : 4'b1111);
+
+assign data_out = (instruction_type == 2'b00) ? {4{data_in[7:0]}} :
+                  (instruction_type == 2'b01) ? {2{data_in[15:0]}} :
+                  data_in;
 
 endmodule
