@@ -1,2 +1,2 @@
 # Strixion
-Blazing Fast.....
+Blazing Fast RISC-V
